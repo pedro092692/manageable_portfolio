@@ -36,7 +36,17 @@ def login():
 
 @app.route('/admin', methods=['GET'])
 def admin():
-    return render_template('admin.html')
+    return render_template('admin-work.html')
+
+
+@app.route('/admin/personal', methods=['GET'])
+def personal():
+    return render_template('admin-personal.html')
+
+
+@app.route('/admin/page', methods=['GET'])
+def page():
+    return render_template('page-info.html')
 
 
 @app.route('/admin/add-work', methods=['GET'])

@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+
+{% block title %} Personal Info {% endblock %}
+
+{% block content %}
+    <div class="bg-body-tertiary rounded">
+        <h1>Personal info</h1>
+        <!-- photo profile-->
+        <div class="card">
+          <div class="card-header">
+            Main Info
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Photo Profile</h5>
+              <div class="d-flex justify-content-between align-items-center gap-4">
+                  <p class="card-text">Photo Profile.</p>
+                  <img src="https://th.bing.com/th/id/OIP.1gqxePGrU4JMYrWZJy1XaQAAAA?rs=1&pid=ImgDetMain" alt="photo" width="128">
+              </div>
+            <a href="#" class="btn btn-primary">Update Photo</a>
+              <h5 class="card-title mt-4">Email</h5>
+              <p class="card-text">pedro092692@hotmail.com</p>
+            <a href="#" class="btn btn-primary">Update Email</a>
+          </div>
+        </div>
+
+        <!-- bio text -->
+        <div class="card mt-4">
+          <div class="card-header">
+            Bio Information
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Bio</h5>
+              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam at blanditiis consectetur, dicta eius eum excepturi expedita incidunt inventore, iusto labore mollitia, necessitatibus nostrum perspiciatis placeat tenetur voluptas. Dolor, in..</p>
+            <a href="#" class="btn btn-primary">Update Bio</a>
+          </div>
+        </div>
+
+        <!-- Social networks -->
+        <div class="card mt-4">
+          <div class="card-header">
+            Social Info
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Social Networks</h5>
+                <ul class="list-group mb-4">
+                  <li class="list-group-item">Social Network 1</li>
+                  <li class="list-group-item">Social Network 2</li>
+                  <li class="list-group-item">Social Network 3</li>
+                  <li class="list-group-item">Social Network 4</li>
+                </ul>
+            <a href="#" class="btn btn-primary">App Social Network</a>
+          </div>
+        </div>
+
+
+    </div>
+{% endblock content%}

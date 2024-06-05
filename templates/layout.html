@@ -12,7 +12,7 @@
     {% from 'bootstrap5/form.html' import render_field %}
     <!-- fontawesome-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <title>Admin panel</title>
+    <title>{% block title %} {% endblock %}</title>
 </head>
 <body class="d-flex flex-column vh-100">
     <!-- header-->
@@ -27,25 +27,25 @@
        <!--sidebar-->
         <main class="d-flex flex-column flex-nowrap h-100">
             <div class=" flex-grow-1 d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
-                <a href="/admin" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none ">
+                <a href="{{ url_for('admin') }}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none ">
                   <span class="fs-4">Admin panel</span>
                 </a>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                   <li class="nav-item">
-                    <a href="#" class="nav-link {{ 'active' if url_for(request.endpoint) == '/admin' }}" aria-current="page">
+                    <a href="{{ url_for('admin') }}" class="nav-link text-white {{ 'active' if url_for(request.endpoint) == '/admin' }}" aria-current="page">
                       <i class="fa-solid fa-briefcase"></i>
                       Recent Work
                     </a>
                   </li>
                 <li>
-                    <a href="#" class="nav-link text-white {{ 'active' if url_for(request.endpoint) == '/personal-info' }}">
+                    <a href="{{ url_for('personal') }}" class="nav-link text-white {{ 'active' if url_for(request.endpoint) == '/admin/personal' }}">
                       <i class="fa-solid fa-user"></i>
                       Personal Info
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link text-white {{ 'active' if url_for(request.endpoint) == '/page-info' }}">
+                    <a href="{{ url_for('page') }}" class="nav-link text-white {{ 'active' if url_for(request.endpoint) == '/admin/page' }}">
                       <i class="fa-solid fa-pager"></i>
                       Page Info
                     </a>
@@ -56,17 +56,7 @@
         </main>
         <!-- content-->
         <div class="p-5 flex-grow-1">
-            <div class="bg-body-tertiary rounded">
-                <h1>Recent work</h1>
-                 <ul class="list-group mb-4">
-                      <li class="list-group-item" aria-current="true">An active item</li>
-                      <li class="list-group-item">A second item</li>
-                      <li class="list-group-item">A third item</li>
-                      <li class="list-group-item">A fourth item</li>
-                      <li class="list-group-item">And a fifth one</li>
-                 </ul>
-                <a class="btn btn-lg btn-primary" href="/docs/5.3/components/navbar/" role="button">Add new work</a>
-            </div>
+            {% block content %} {% endblock content %}
         </div>
     </div>
     {{ bootstrap.load_js() }}
