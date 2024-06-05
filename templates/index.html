@@ -14,6 +14,8 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Lora:ital,wght@0,400..700;1,400..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+		<!-- render flash messages -->
+		{% from '_flash_helper.html' import render_flash %}
 	</head>
 	<body class="is-preload">
 
@@ -21,25 +23,21 @@
 			<header id="header">
 				<div class="inner">
 					<a href="#" class="image avatar"><img src="{{ url_for('static', filename='images/avatar.jpg') }}" alt="" /></a>
-					<h1><strong>I am Strata</strong>, a super simple<br />
-					responsive site template freebie<br />
-					crafted by <a href="http://html5up.net">HTML5 UP</a>.</h1>
+					<h1 class="intro"><strong class="intro">I am Pedro Bastidas</strong>, a Python dev.<br/>
+					let's create amazing things<br />
+					with powerful tools.</a></h1>
 				</div>
 			</header>
 
 		<!-- Main -->
 			<div id="main">
-
+				{{ render_flash() }}
 				<!-- One -->
 					<section id="one">
 						<header class="major">
-							<h2>Ipsum lorem dolor aliquam ante commodo<br />
-							magna sed accumsan arcu neque.</h2>
+							<h2 class="title-main"><span class="weigh">Why Use </span>Python?</h2>
 						</header>
-						<p>Accumsan orci faucibus id eu lorem semper. Eu ac iaculis ac nunc nisi lorem vulputate lorem neque cubilia ac in adipiscing in curae lobortis tortor primis integer massa adipiscing id nisi accumsan pellentesque commodo blandit enim arcu non at amet id arcu magna. Accumsan orci faucibus id eu lorem semper nunc nisi lorem vulputate lorem neque cubilia.</p>
-						<ul class="actions">
-							<li><a href="#" class="button">Learn More</a></li>
-						</ul>
+						<p class="main-text">Python can tackle a wide range of tasks, making it a valuable tool for various projects. From web development and data analysis to machine learning, automation, and scientific computing, Python has you covered.</p>
 					</section>
 
 				<!-- Two -->
@@ -49,32 +47,34 @@
 							<article class="col-6 col-12-xsmall work-item">
 								<a href="{{ url_for('static', filename='images/fulls/01.jpg') }}" class="image fit thumb">
 									<img src="{{ url_for('static', filename='images/fulls/01.jpg') }}" alt="" /></a>
-								<h3>Magna sed consequat tempus</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+								<h3><a href="https://github.com/pedro092692/top_movies_web" target="_blank">Top movies</a></h3>
+								<p>Top movies is a project where you can search for your favorite movies and give them a score, the synopsis and the images are downloaded from an API, the movies will be ordered by numbers from highest to lowest.</p>
 							</article>
 							<article class="col-6 col-12-xsmall work-item">
 								<a href="{{ url_for('static', filename='images/fulls/02.jpg') }}" class="image fit thumb">
 									<img src="{{ url_for('static', filename='images/fulls/02.jpg') }}" alt="" /></a>
-								<h3>Ultricies lacinia interdum</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+								<h3><a href="https://github.com/pedro092692/personal-blog" target="_blank">Personal Blog</a></h3>
+								<p><a href="https://personal-blog-z3xt.onrender.com/" target="_blank">Personal blog</a> is a fairly simple blog where you can write articles quite easily. You can also register users where they can comment on the blog entries. This project is made with python flask sqlalchemy and wtforms.</p>
 							</article>
 							<article class="col-6 col-12-xsmall work-item">
 								<a href="{{ url_for('static', filename='images/fulls/03.jpg') }}" class="image fit thumb">
-									<img src="{{ url_for('static', filename='images/fulls/03.jpg') }}" alt="" /></a>
-								<h3>Tortor metus commodo</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+									<img src="{{ url_for('static', filename='images/fulls/03.jpg') }}" alt="" />
+								</a>
+
+								<h3><a href="https://www.youtube.com/watch?v=bsEHmfPWoHM" target="_blank">Instagram image scraper</a></h3>
+								<p>This is a bot that can download photos or video reels from an Instagram account and then save the information on the computer. For ethical reasons, I am not going to share the code of this program, only how it works.</p>
 							</article>
 							<article class="col-6 col-12-xsmall work-item">
 								<a href="{{ url_for('static', filename='images/fulls/04.jpg') }}" class="image fit thumb">
 									<img src="{{ url_for('static', filename='images/fulls/04.jpg') }}" alt="" /></a>
-								<h3>Quam neque phasellus</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+								<h3><a href="https://github.com/pedro092692/amazon_price_tracker" target="_blank">Amazon price down notifier</a></h3>
+								<p>This program is responsible for giving you a notice by email if a selected product is underpriced, perfect for hunting for offers.</p>
 							</article>
 							<article class="col-6 col-12-xsmall work-item">
 								<a href="{{ url_for('static', filename='images/fulls/05.jpg') }}" class="image fit thumb">
 									<img src="{{ url_for('static', filename='images/fulls/05.jpg') }}" alt="" /></a>
-								<h3>Nunc enim commodo aliquet</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
+								<h3><a href="https://github.com/pedro092692/crossroad_turtle" target="_blank">Turtle crossroad</a></h3>
+								<p>This is a simple game copy of the classic crossroad game made in python with turtle graphics.</p>
 							</article>
 							<article class="col-6 col-12-xsmall work-item">
 								<a href="{{ url_for('static', filename='images/fulls/06.jpg') }}" class="image fit thumb">
@@ -83,61 +83,52 @@
 								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
 							</article>
 						</div>
-						<ul class="actions">
-							<li><a href="#" class="button">Full Portfolio</a></li>
-						</ul>
 					</section>
 
 				<!-- Three -->
 					<section id="three">
-						<h2>Get In Touch</h2>
-						<p>Accumsan pellentesque commodo blandit enim arcu non at amet id arcu magna. Accumsan orci faucibus id eu lorem semper nunc nisi lorem vulputate lorem neque lorem ipsum dolor.</p>
-						<div class="row">
-							<div class="col-8 col-12-small">
-								<form method="post" action="#">
-									<div class="row gtr-uniform gtr-50">
-										<div class="col-6 col-12-xsmall"><input type="text" name="name" id="name" placeholder="Name" /></div>
-										<div class="col-6 col-12-xsmall"><input type="email" name="email" id="email" placeholder="Email" /></div>
-										<div class="col-12"><textarea name="message" id="message" placeholder="Message" rows="4"></textarea></div>
-									</div>
-								</form>
-								<ul class="actions">
-									<li><input type="submit" value="Send Message" /></li>
-								</ul>
+						{% with messages = get_flashed_messages() %}
+							{% if not messages %}
+							<h2>Get In Touch</h2>
+							<p>I believe strong communication and collaboration are key to any successful development. Let's connect and discuss your project. I'm confident that together, we can achieve objective.</p>
+							<div class="row">
+								<div class="col-8 col-12-small">
+									<form method="POST">
+										<div class="row gtr-uniform gtr-50">
+											<div class="col-6 col-12-xsmall"><input type="text" name="name" id="name" placeholder="Name" /></div>
+											<div class="col-6 col-12-xsmall"><input type="email" name="email" id="email" placeholder="Email" /></div>
+											<div class="col-12"><textarea name="message" id="message" placeholder="Message" rows="4"></textarea></div>
+										</div>
+
+									<ul class="actions" id="submit">
+										<li><input type="submit" value="Send Message" /></li>
+									</ul>
+
+									</form>
+								</div>
+								<div class="col-4 col-12-small">
+									<ul class="labeled-icons">
+										<li>
+											<h3 class="icon solid fa-envelope"><span class="label">Email</span></h3>
+											<a href="mailto:pedro092692@hotmail.com?subject=Contact for work">Contact To me</a>
+										</li>
+									</ul>
+								</div>
 							</div>
-							<div class="col-4 col-12-small">
-								<ul class="labeled-icons">
-									<li>
-										<h3 class="icon solid fa-home"><span class="label">Address</span></h3>
-										1234 Somewhere Rd.<br />
-										Nashville, TN 00000<br />
-										United States
-									</li>
-									<li>
-										<h3 class="icon solid fa-mobile-alt"><span class="label">Phone</span></h3>
-										000-000-0000
-									</li>
-									<li>
-										<h3 class="icon solid fa-envelope"><span class="label">Email</span></h3>
-										<a href="#">hello@untitled.tld</a>
-									</li>
-								</ul>
-							</div>
-						</div>
 					</section>
+							{% endif %}
+						{% endwith %}
 			</div>
 
 		<!-- Footer -->
 			<footer id="footer">
 				<div class="inner">
 					<ul class="icons">
-						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-						<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+						<li><a href="https://github.com/pedro092692" target="_blank" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						<li><a href="https://www.linkedin.com/in/pedro-bastidas-670a90102/" target="_blank" class="icon brands fa-linkedin"><span class="label">linkedin</span></a></li>
 					</ul>
 					<ul class="copyright">
-						<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						<li>&copy; Pedro Bastidas</li>
 					</ul>
 				</div>
 			</footer>
