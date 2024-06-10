@@ -12,11 +12,8 @@
           </div>
           <div class="card-body">
             <h5 class="card-title">Photo Profile</h5>
-              <div class="d-flex justify-content-between align-items-center gap-4">
-                  <p class="card-text">Photo Profile.</p>
-                  <img src="https://th.bing.com/th/id/OIP.1gqxePGrU4JMYrWZJy1XaQAAAA?rs=1&pid=ImgDetMain" alt="photo" width="128">
-              </div>
-            <a href="#" class="btn btn-primary">Update Photo</a>
+                <p>A square photo size is recommended eg 500 x 500 px.</p>
+                {{ render_form(form_photo_profile) }}
               <h5 class="card-title mt-4">Email</h5>
               <p class="card-text">pedro092692@hotmail.com</p>
             <a href="#" class="btn btn-primary">Update Email</a>

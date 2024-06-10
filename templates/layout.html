@@ -12,6 +12,8 @@
     {% from 'bootstrap5/form.html' import render_field %}
     <!-- fontawesome-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body class="d-flex flex-column vh-100">
@@ -33,19 +35,19 @@
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                   <li class="nav-item">
-                    <a href="{{ url_for('admin') }}" class="nav-link text-white {{ 'active' if url_for(request.endpoint) == '/admin' }}" aria-current="page">
+                    <a href="{{ url_for('admin') }}" class="nav-link text-white {{ 'active' if request.endpoint in ['admin', 'add_work', 'work_edit'] }}" aria-current="page">
                       <i class="fa-solid fa-briefcase"></i>
                       Recent Work
                     </a>
                   </li>
                 <li>
-                    <a href="{{ url_for('personal') }}" class="nav-link text-white {{ 'active' if url_for(request.endpoint) == '/admin/personal' }}">
+                    <a href="{{ url_for('personal') }}" class="nav-link text-white {{ 'active' if request.endpoint == 'personal' }}">
                       <i class="fa-solid fa-user"></i>
                       Personal Info
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('page') }}" class="nav-link text-white {{ 'active' if url_for(request.endpoint) == '/admin/page' }}">
+                    <a href="{{ url_for('page') }}" class="nav-link text-white {{ 'active' if request.endpoint == 'page' }}">
                       <i class="fa-solid fa-pager"></i>
                       Page Info
                     </a>
@@ -60,5 +62,6 @@
         </div>
     </div>
     {{ bootstrap.load_js() }}
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
