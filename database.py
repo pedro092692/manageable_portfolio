@@ -19,7 +19,7 @@ db = SQLAlchemy(model_class=Base)
 class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(250), nullable=False)
-    photo_profile_url: Mapped[str] = mapped_column(String(1000), nullable=False)
+    name: Mapped[str] = mapped_column(String(1000), nullable=False)
     password: Mapped[str] = mapped_column(String(500), nullable=False)
 
 
@@ -88,5 +88,78 @@ class Database:
     def delete_work(self, work: Work):
         self.db.session.delete(work)
         self.db.session.commit()
+
+    def check_page_info_type(self, info_type):
+        info = self.db.session.execute(self.db.select(PageInfo).filter(PageInfo.type == info_type)).scalars().first()
+        return info
+
+    def add_page_info(self, info_type, value):
+        # check if exist previous info
+        info = self.check_page_info_type(info_type)
+        if info:
+            info.value = value
+            self.db.session.commit()
+        else:
+            new_info = PageInfo(
+                type=info_type,
+                value=value
+            )
+            self.db.session.add(new_info)
+            self.db.session.commit()
+            return new_info
+
+    def add_social(self, name, url, social_id=None):
+        if social_id:
+            social_network = self.get_social(social_id)
+            if social_network:
+                social_network.social_network = name
+                social_network.link = url
+                self.db.session.commit()
+        else:
+            new_social = SocialNetwork(
+                social_network=name,
+                link=url
+            )
+
+            self.db.session.add(new_social)
+            self.db.session.commit()
+
+            return new_social
+
+    def all_social(self):
+        all_social = self.db.session.execute(self.db.select(SocialNetwork).order_by(SocialNetwork.social_network)).scalars().all()
+        return all_social
+
+    def get_social(self, social_id):
+        social_network = self.db.get_or_404(SocialNetwork, social_id)
+        return social_network
+
+    def delete_social(self, social_network: SocialNetwork):
+        self.db.session.delete(social_network)
+        self.db.session.commit()
+
+    def check_user(self, email=''):
+        if email:
+            user = User.query.filter_by(email=email).first()
+            return user
+        else:
+            users = self.db.session.execute(self.db.select(User)).scalars().all()
+            return users
+
+    def create_user(self, email, name, password):
+        new_user = User(
+            email=email,
+            name=name,
+            password=password
+        )
+        self.db.session.add(new_user)
+        self.db.session.commit()
+
+        return new_user
+
+    def get_user(self, user_id):
+        return self.db.get_or_404(User, user_id)
+
+
 
 

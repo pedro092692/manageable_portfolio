@@ -4,6 +4,9 @@
 
 {% block content %}
     <div class="bg-body-tertiary rounded">
+        <!-- Flash messages -->
+        {{ render_flash() }}
+
         <h1>Personal info</h1>
         <!-- photo profile-->
         <div class="card">
@@ -11,15 +14,20 @@
             Main Info
           </div>
           <div class="card-body">
+              <!-- Photo profile -->
             <h5 class="card-title">Photo Profile</h5>
-                <p>A square photo size is recommended eg 500 x 500 px.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    {{ render_form(form_photo_profile) }}
-                    <img src="#" id="photo_preview" alt="" width="150">
-                </div>
-              <h5 class="card-title mt-4">Email</h5>
-              <p class="card-text">pedro092692@hotmail.com</p>
-            <a href="#" class="btn btn-primary">Update Email</a>
+              <p>A square photo size is recommended eg 500 x 500 px.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                  {{ render_form(form_photo_profile) }}
+                  <img src="#" id="photo_preview" alt="" width="150">
+              </div>
+             <!-- Email -->
+              <h5 class="card-title mt-4">User Email For Contact</h5>
+              {{ render_form(email_form) }}
+
+              <!-- Contact -->
+              <h5 class="card-title mt-4">Given Name</h5>
+              {{ render_form(name_form) }}
           </div>
         </div>
 
@@ -30,8 +38,7 @@
           </div>
           <div class="card-body">
             <h5 class="card-title">Bio</h5>
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam at blanditiis consectetur, dicta eius eum excepturi expedita incidunt inventore, iusto labore mollitia, necessitatibus nostrum perspiciatis placeat tenetur voluptas. Dolor, in..</p>
-            <a href="#" class="btn btn-primary">Update Bio</a>
+              {{ render_form(bio_form) }}
           </div>
         </div>
 
@@ -42,13 +49,20 @@
           </div>
           <div class="card-body">
             <h5 class="card-title">Social Networks</h5>
+              {% if social_networks %}
                 <ul class="list-group mb-4">
-                  <li class="list-group-item">Social Network 1</li>
-                  <li class="list-group-item">Social Network 2</li>
-                  <li class="list-group-item">Social Network 3</li>
-                  <li class="list-group-item">Social Network 4</li>
+                {% for social in social_networks %}
+                    <li class="list-group-item d-flex justify-content-between" aria-current="true">
+                        <a href="{{ url_for('social_edit', social_id=social.id) }}" class="text-decoration-none text-body">
+                            {{social.social_network |capitalize }}
+                        </a>
+                    </li>
+                {% endfor %}
                 </ul>
-            <a href="#" class="btn btn-primary">App Social Network</a>
+              {% else %}
+                <p>No social networks links yet please add new one.</p>
+              {% endif %}
+            <a href="{{ url_for('add_social') }}" class="btn btn-primary">App Social Network</a>
           </div>
         </div>
 

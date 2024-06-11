@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block title %} Admin Panel {% endblock %}
+
+{% block content %}
+
+    {{ render_form(form) }}
+
+    {% if request.endpoint == 'social_edit' %}
+        <form action="#" name="delete_form" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="social_id" value="{{ social_id }}">
+            <input type="submit" value="Delete Social Network" class="mt-2 btn btn-danger">
+        </form>
+    {% endif %}
+
+{% endblock content%}

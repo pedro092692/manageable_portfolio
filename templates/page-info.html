@@ -4,23 +4,31 @@
 
 {% block content %}
     <div class="bg-body-tertiary rounded">
+        <!-- Flash messages -->
+        {{ render_flash() }}
         <h1>Page info</h1>
         <!-- Main title text-->
         <div class="card mt-4">
-          <div class="card-header">
-            Main Text
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Main page text</h5>
-              <p class="card-text">Why use python</p>
-            <a href="#" class="btn btn-primary">Update Text</a>
-              <h5 class="card-title mt-4">Header Background</h5>
-              <div class="d-flex justify-content-between align-items-center gap-4">
-                  <p class="card-text">Background Photo.</p>
-                  <img src="https://th.bing.com/th/id/OIP.1gqxePGrU4JMYrWZJy1XaQAAAA?rs=1&pid=ImgDetMain" alt="photo" width="128">
-              </div>
-              <a href="#" class="btn btn-primary">Update Background</a>
-          </div>
+            <div class="card-header">
+                Main Text
+            </div>
+
+            <div class="card-body">
+                 <!-- Main title -->
+                <h5 class="card-title">Main page text</h5>
+                    {{ render_form(main_title_form) }}
+
+                <!-- Main Text -->
+                <h5 class="card-title mt-4">Main Text</h5>
+                    {{ render_form(main_text_form) }}
+
+                <!-- Photo profile -->
+                <h5 class="card-title mt-4">Header Background</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    {{ render_form(header_img_form) }}
+                  <img src="#" id="photo_preview" alt="" width="150">
+                </div>
+            </div>
         </div>
 
         <!-- Contact -->
@@ -30,12 +38,11 @@
           </div>
           <div class="card-body">
             <h5 class="card-title">Title</h5>
-              <p class="card-text">Get In Touch</p>
-            <a href="#" class="btn btn-primary">Update Title</a>
-
+              <!-- Get in touch -->
+              {{ render_form(get_in_touch_title_form) }}
+              <!-- Get in touch text -->
               <h5 class="card-title mt-4">Contact paragraph text</h5>
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Exercitationem laboriosam, laborum. Accusamus ad adipisci assumenda blanditiis doloremque ea earum eius error ipsa ipsum necessitatibus nostrum perferendis, possimus repellat, rerum vero.</p>
-            <a href="#" class="btn btn-primary">Update Text</a>
+              {{ render_form(get_in_touch_text_form) }}
           </div>
         </div>
         </div>

@@ -3,9 +3,11 @@ from flask_login import login_user, LoginManager, current_user, logout_user, log
 from flask_wtf.csrf import CSRFProtect
 from database import Database
 from send_email import Email
-from forms import LoginForm, RecentWork, PhotoProfile
+from forms import LoginForm, RecentWork, PhotoProfile, Email, Bio, GivenName, SocialNetwork, PageMainTitle, MainText, \
+    GetInTouchText, GetInTouch, UserForm
 from flask_bootstrap import Bootstrap5
-from helpers import get_avatar_extension
+from helpers import get_avatar_extension, get_info_page, save_img_file
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 
@@ -22,12 +24,21 @@ db.create_tables()
 # PLUGINS
 Bootstrap5(app)
 
+# login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.get_user(user_id)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # media
     # get file extension
-    file = get_avatar_extension()
+    file = get_avatar_extension(file_name='avatar')
     file_extension = ''
 
     if file:
@@ -38,8 +49,28 @@ def index():
     else:
         photo_name = ''
 
+    email = get_info_page(db=db, type_info='email')
+    bio = get_info_page(db=db, type_info='bio')
+    social_networks = db.all_social()
+    works = db.get_all_works()
+    main_title = get_info_page(db=db, type_info='page_title')
+    main_text = get_info_page(db=db, type_info='main_text')
+    get_in_touch_title = get_info_page(db=db, type_info='get_in_touch_title')
+    get_in_touch_text = get_info_page(db=db, type_info='get_in_touch_text')
+
     media = {
         'photo_profile': photo_name
+    }
+
+    page_data = {
+        'email': email,
+        'bio': bio,
+        'social_networks': social_networks,
+        'works': works,
+        'main_title': main_title,
+        'main_text': main_text,
+        'get_in_touch_title': get_in_touch_title,
+        'get_in_touch_text': get_in_touch_text,
     }
 
     if request.method == 'POST':
@@ -52,44 +83,157 @@ def index():
         if send_email:
             flash('Message sent I will contact you as soon as possible.')
 
-    return render_template('index.html', media=media)
+    return render_template('index.html', media=media, page_data=page_data)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    return render_template('login.html', form=form)
+    if current_user.is_authenticated:
+        return redirect(url_for('admin'))
+
+    user = db.check_user()
+    if user:
+        form = LoginForm()
+        if form.validate_on_submit():
+            user_email = form.user.data
+            user_password = form.password.data
+            user = db.check_user(email=user_email)
+            if user:
+                if check_password_hash(user.password, user_password):
+                    login_user(user)
+                    return redirect(url_for('admin'))
+            else:
+                flash('Invalid Password or User')
+
+    else:
+        form = UserForm()
+
+        if form.submit.data and 'name' in request.form:
+            user_email = form.user_email.data
+            user_name = form.name.data
+            user_password = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=8)
+
+            db.create_user(email=user_email, password=user_password, name=user_name)
+
+            return redirect(url_for('login'))
+
+    return render_template('login.html', form=form, user=user)
 
 
 @app.route('/admin', methods=['GET'])
+@login_required
 def admin():
     all_works = db.get_all_works()
     return render_template('admin-work.html', all_works=all_works)
 
 
 @app.route('/admin/personal', methods=['GET', 'POST'])
+@login_required
 def personal():
+    # photo profile
     form_photo_profile = PhotoProfile()
-    if form_photo_profile.submit.data and form_photo_profile.validate():
-        # check if exist avatar photo
-        file = get_avatar_extension()
-        if file:
-            os.remove(f'static/images/{file}')
+    if form_photo_profile.submit_photo.data and form_photo_profile.validate():
+        # save img
+        save_img_file(img_type='avatar', img=form_photo_profile.photo.data)
+        flash('Photo profile updated')
 
-        avatar = form_photo_profile.photo.data
-        extension = avatar.filename.split('.')[1]
-        avatar.filename = f'avatar.{extension}'
-        avatar.save(os.path.join('static/images', avatar.filename))
+    # Email info
+    email_info = get_info_page(db=db, type_info='email')
 
-    return render_template('admin-personal.html', form_photo_profile=form_photo_profile)
+    email_form = Email(email=email_info)
+
+    if email_form.submit_email.data and email_form.validate():
+        email = email_form.email.data
+        db.add_page_info(info_type='email', value=email)
+
+        flash('Email updated')
+
+    # Given name info
+    name_form = GivenName()
+
+    # Bio info
+    bio_info = get_info_page(db=db, type_info='bio')
+    bio_form = Bio(bio=bio_info)
+
+    if bio_form.submit_bio.data and bio_form.validate():
+        bio_info = bio_form.bio.data
+        db.add_page_info(info_type='bio', value=bio_info)
+
+        flash('Bio info updated')
+
+    # Social Networks
+    all_networks = db.all_social()
+
+    return render_template('admin-personal.html', form_photo_profile=form_photo_profile, email_form=email_form,
+                           bio_form=bio_form, name_form=name_form, social_networks=all_networks)
 
 
-@app.route('/admin/page', methods=['GET'])
+@app.route('/admin/page', methods=['GET', 'POST'])
+@login_required
 def page():
-    return render_template('page-info.html')
+    # Main title text
+    main_title_info = get_info_page(db=db, type_info='page_title')
+    main_title_form = PageMainTitle(
+        title=main_title_info
+    )
+    if main_title_form.submit_title.data and main_title_form.validate():
+        title = main_title_form.title.data
+        db.add_page_info(info_type='page_title', value=title)
+        flash('Main title Updated.')
+
+    # header bg
+    header_img_form = PhotoProfile()
+    if header_img_form.submit_photo.data and header_img_form.validate():
+        # save image file
+        img = header_img_form.photo.data
+        save_img_file(img_type='bg', img=img)
+
+        flash('header Background updated')
+
+    # Main text
+    main_text_info = get_info_page(db=db, type_info='main_text')
+    main_text_form = MainText(
+        text=main_text_info
+    )
+
+    if main_text_form.submit_text.data and main_title_form.validate():
+        text = main_text_form.text.data
+        db.add_page_info(info_type='main_text', value=text)
+
+        flash('Main Text Updated.')
+
+    # Get in touch title
+    get_in_touch_title_info = get_info_page(db=db, type_info='get_in_touch_title')
+    get_in_touch_title_form = GetInTouch(
+        title=get_in_touch_title_info
+    )
+
+    if get_in_touch_title_form.submit_get_in_touch_title.data and get_in_touch_title_form.validate():
+        title = get_in_touch_title_form.title.data
+        db.add_page_info(info_type='get_in_touch_title', value=title)
+
+        flash('Get In Touch Title Updated.')
+
+    # Get in touch text
+
+    get_in_touch_text_info = get_info_page(db=db, type_info='get_in_touch_text')
+    get_in_touch_text_form = GetInTouchText(
+        text=get_in_touch_text_info
+    )
+
+    if get_in_touch_text_form.submit_get_in_touch_text.data and get_in_touch_text_form.validate():
+        text = get_in_touch_text_form.text.data
+        db.add_page_info(info_type='get_in_touch_text', value=text)
+
+        flash('Get In Touch Text Updated')
+
+    return render_template('page-info.html', main_title_form=main_title_form, header_img_form=header_img_form,
+                           main_text_form=main_text_form, get_in_touch_title_form=get_in_touch_title_form,
+                           get_in_touch_text_form=get_in_touch_text_form)
 
 
 @app.route('/admin/add-work', methods=['GET', 'POST'])
+@login_required
 def add_work():
     form = RecentWork()
     if form.validate_on_submit():
@@ -105,7 +249,48 @@ def add_work():
     return render_template('add-work.html', form=form)
 
 
+@app.route('/admin/add-social', methods=['GET', 'POST'])
+@login_required
+def add_social():
+    form = SocialNetwork()
+    if form.validate_on_submit():
+        social_network_name = form.name.data
+        social_network_url = form.url.data
+
+        db.add_social(name=social_network_name, url=social_network_url)
+        flash('Social network added')
+        return redirect(url_for('personal'))
+
+    return render_template('add-social.html', form=form)
+
+
+@app.route('/admin/social/edict/<social_id>', methods=['GET', 'POST'])
+@login_required
+def social_edit(social_id):
+    social_network = db.get_social(social_id)
+    form = SocialNetwork(
+        name=social_network.social_network,
+        url=social_network.link
+    )
+
+    if form.submit_social.data and form.validate():
+        name = form.name.data
+        url = form.url.data
+        db.add_social(name=name, url=url, social_id=social_network.id)
+
+        flash('Social Network Updated.')
+        return redirect(url_for('personal'))
+
+    if request.method == 'POST' and 'social_id' in request.form:
+        db.delete_social(social_network=social_network)
+        flash('Social Network Deleted')
+        return redirect(url_for('personal'))
+
+    return render_template('add-social.html', form=form, social_id=social_network.id)
+
+
 @app.route('/admin/work/edit/<work_id>', methods=['GET', 'POST'])
+@login_required
 def work_edit(work_id):
     work = db.get_work(work_id)
     form_edit = RecentWork(
@@ -131,6 +316,23 @@ def work_edit(work_id):
         return redirect(url_for('admin'))
 
     return render_template('add-work.html', form=form_edit, work_id=work.id)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('index'))
+
+
+@app.errorhandler(404)
+def custom_404(error):
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

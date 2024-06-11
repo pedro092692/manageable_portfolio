@@ -9,6 +9,7 @@
 		<title>Strata by HTML5 UP</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
 		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}" />
 		<!-- google fonts -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,9 +28,7 @@
 					{% else %}
 					<a href="#" class="image avatar"><img src="{{ url_for('static', filename='images/avatarold.jpg') }}" alt="" /></a>
 					{% endif %}
-					<h1 class="intro"><strong class="intro">I am Pedro Bastidas</strong>, a Python dev.<br/>
-					let's create amazing things<br />
-					with powerful tools.</a></h1>
+					<h1 class="intro">{{ page_data['bio'] if page_data['bio'] else 'No info Bio yet.' }}</a></h1>
 				</div>
 			</header>
 
@@ -39,98 +38,93 @@
 				<!-- One -->
 					<section id="one">
 						<header class="major">
-							<h2 class="title-main"><span class="weigh">Why Use </span>Python?</h2>
+							{% if page_data['main_title'] %}
+								<h2 class="title-main">{{ page_data['main_title'] }}</h2>
+							{% else %}
+								<h2 class="title-main">My Work Portfolio</h2>
+							{% endif %}
 						</header>
-						<p class="main-text">Python can tackle a wide range of tasks, making it a valuable tool for various projects. From web development and data analysis to machine learning, automation, and scientific computing, Python has you covered.</p>
+						{% if page_data['main_text'] %}
+							<p class="main-text">{{ page_data['main_text'] }}</p>
+						{% else %}
+							<p class="main-text"> Welcome to my portfolio page! </p>
+						{% endif %}
+
 					</section>
 
 				<!-- Two -->
-					<section id="two">
-						<h2>Recent Work</h2>
+					<section class="two">
+						{% if page_data['works'] %}
+							<h2>Recent Work</h2>
+						{% endif %}
 						<div class="row">
-							<article class="col-6 col-12-xsmall work-item">
-								<a href="{{ url_for('static', filename='images/fulls/01.jpg') }}" class="image fit thumb">
-									<img src="{{ url_for('static', filename='images/fulls/01.jpg') }}" alt="" /></a>
-								<h3><a href="https://github.com/pedro092692/top_movies_web" target="_blank">Top movies</a></h3>
-								<p>Top movies is a project where you can search for your favorite movies and give them a score, the synopsis and the images are downloaded from an API, the movies will be ordered by numbers from highest to lowest.</p>
-							</article>
-							<article class="col-6 col-12-xsmall work-item">
-								<a href="{{ url_for('static', filename='images/fulls/02.jpg') }}" class="image fit thumb">
-									<img src="{{ url_for('static', filename='images/fulls/02.jpg') }}" alt="" /></a>
-								<h3><a href="https://github.com/pedro092692/personal-blog" target="_blank">Personal Blog</a></h3>
-								<p><a href="https://personal-blog-z3xt.onrender.com/" target="_blank">Personal blog</a> is a fairly simple blog where you can write articles quite easily. You can also register users where they can comment on the blog entries. This project is made with python flask sqlalchemy and wtforms.</p>
-							</article>
-							<article class="col-6 col-12-xsmall work-item">
-								<a href="{{ url_for('static', filename='images/fulls/03.jpg') }}" class="image fit thumb">
-									<img src="{{ url_for('static', filename='images/fulls/03.jpg') }}" alt="" />
-								</a>
 
-								<h3><a href="https://www.youtube.com/watch?v=bsEHmfPWoHM" target="_blank">Instagram image scraper</a></h3>
-								<p>This is a bot that can download photos or video reels from an Instagram account and then save the information on the computer. For ethical reasons, I am not going to share the code of this program, only how it works.</p>
-							</article>
-							<article class="col-6 col-12-xsmall work-item">
-								<a href="{{ url_for('static', filename='images/fulls/04.jpg') }}" class="image fit thumb">
-									<img src="{{ url_for('static', filename='images/fulls/04.jpg') }}" alt="" /></a>
-								<h3><a href="https://github.com/pedro092692/amazon_price_tracker" target="_blank">Amazon price down notifier</a></h3>
-								<p>This program is responsible for giving you a notice by email if a selected product is underpriced, perfect for hunting for offers.</p>
-							</article>
-							<article class="col-6 col-12-xsmall work-item">
-								<a href="{{ url_for('static', filename='images/fulls/05.jpg') }}" class="image fit thumb">
-									<img src="{{ url_for('static', filename='images/fulls/05.jpg') }}" alt="" /></a>
-								<h3><a href="https://github.com/pedro092692/crossroad_turtle" target="_blank">Turtle crossroad</a></h3>
-								<p>This is a simple game copy of the classic crossroad game made in python with turtle graphics.</p>
-							</article>
-							<article class="col-6 col-12-xsmall work-item">
-								<a href="{{ url_for('static', filename='images/fulls/06.jpg') }}" class="image fit thumb">
-									<img src="{{ url_for('static', filename='images/fulls/06.jpg') }}" alt="" /></a>
-								<h3>Risus ornare lacinia</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
-							</article>
+						{% if page_data['works'] %}
+							{% for work in page_data['works'] %}
+								<article class="col-6 col-12-xsmall work-item">
+									<a href="{{ work.work_url }}" target="_blank" class="image fit thumb">
+									<img src="{{ work.image_url }}" alt="" /></a>
+									<h3>
+										<a href="{{ work.work_url }}" target="_blank">{{ work.title }}</a>
+									</h3>
+									<p>{{ work.text_info }}</p>
+								</article>
+							{% endfor %}
+						{% else %}
+							<h2>There is no post yet please add new one.</h2>
+						{% endif %}
+
 						</div>
 					</section>
-
 				<!-- Three -->
-					<section id="three">
-						{% with messages = get_flashed_messages() %}
-							{% if not messages %}
-							<h2>Get In Touch</h2>
-							<p>I believe strong communication and collaboration are key to any successful development. Let's connect and discuss your project. I'm confident that together, we can achieve objective.</p>
-							<div class="row">
-								<div class="col-8 col-12-small">
-									<form method="POST">
-										<div class="row gtr-uniform gtr-50">
-											<div class="col-6 col-12-xsmall"><input type="text" name="name" id="name" placeholder="Name" /></div>
-											<div class="col-6 col-12-xsmall"><input type="email" name="email" id="email" placeholder="Email" /></div>
-											<div class="col-12"><textarea name="message" id="message" placeholder="Message" rows="4"></textarea></div>
-										</div>
+					{% if page_data['email'] %}
+						<section id="three">
+							{% with messages = get_flashed_messages() %}
+								{% if not messages %}
+								<h2>{{ page_data['get_in_touch_title'] }}</h2>
+								<p>{{ page_data['get_in_touch_text'] }}</p>
+								<div class="row">
+									<div class="col-8 col-12-small">
+										<form method="POST">
+											<div class="row gtr-uniform gtr-50">
+												<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+												<div class="col-6 col-12-xsmall"><input type="text" name="name" id="name" placeholder="Name" /></div>
+												<div class="col-6 col-12-xsmall"><input type="email" name="email" id="email" placeholder="Email" /></div>
+												<div class="col-12"><textarea name="message" id="message" placeholder="Message" rows="4"></textarea></div>
+											</div>
 
-									<ul class="actions" id="submit">
-										<li><input type="submit" value="Send Message" /></li>
-									</ul>
+										<ul class="actions" id="submit">
+											<li><input type="submit" value="Send Message" /></li>
+										</ul>
 
-									</form>
+										</form>
+									</div>
+									<div class="col-4 col-12-small">
+										<ul class="labeled-icons">
+											<li>
+												<h3 class="icon solid fa-envelope"><span class="label">Email</span></h3>
+												<a href="mailto:{{page_data['email']}}?subject=Contact for work">Contact To me</a>
+											</li>
+										</ul>
+									</div>
 								</div>
-								<div class="col-4 col-12-small">
-									<ul class="labeled-icons">
-										<li>
-											<h3 class="icon solid fa-envelope"><span class="label">Email</span></h3>
-											<a href="mailto:pedro092692@hotmail.com?subject=Contact for work">Contact To me</a>
-										</li>
-									</ul>
-								</div>
-							</div>
-					</section>
-							{% endif %}
-						{% endwith %}
+						</section>
+								{% endif %}
+							{% endwith %}
+					{% endif %}
 			</div>
 
 		<!-- Footer -->
 			<footer id="footer">
 				<div class="inner">
-					<ul class="icons">
-						<li><a href="https://github.com/pedro092692" target="_blank" class="icon brands fa-github"><span class="label">Github</span></a></li>
-						<li><a href="https://www.linkedin.com/in/pedro-bastidas-670a90102/" target="_blank" class="icon brands fa-linkedin"><span class="label">linkedin</span></a></li>
-					</ul>
+					{% if page_data['social_networks'] %}
+						<ul class="icons">
+							{% for social_network in page_data['social_networks'] %}
+								<li><a href="{{ social_network.link }}" target="_blank" class="icon brands fa-{{ social_network.social_network }}"><span class="label">{{social_network.social_network | capitalize }}</span></a></li>
+							{% endfor %}
+						</ul>
+					{% endif %}
+
 					<ul class="copyright">
 						<li>&copy; Pedro Bastidas</li>
 					</ul>
