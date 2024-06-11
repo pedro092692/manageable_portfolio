@@ -5,6 +5,8 @@ from database import Database
 from send_email import Email
 from forms import LoginForm, RecentWork, PhotoProfile
 from flask_bootstrap import Bootstrap5
+from helpers import get_avatar_extension
+import os
 
 
 # INIT APP
@@ -23,6 +25,23 @@ Bootstrap5(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # media
+    # get file extension
+    file = get_avatar_extension()
+    file_extension = ''
+
+    if file:
+        file_extension = file.split('.')[1]
+
+    if file_extension:
+        photo_name = f'avatar.{file_extension}'
+    else:
+        photo_name = ''
+
+    media = {
+        'photo_profile': photo_name
+    }
+
     if request.method == 'POST':
         email = Email()
         name = request.form.get('name')
@@ -33,7 +52,7 @@ def index():
         if send_email:
             flash('Message sent I will contact you as soon as possible.')
 
-    return render_template('index.html')
+    return render_template('index.html', media=media)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -51,8 +70,17 @@ def admin():
 @app.route('/admin/personal', methods=['GET', 'POST'])
 def personal():
     form_photo_profile = PhotoProfile()
-    if form_photo_profile.validate_on_submit():
-        print('hello photo')
+    if form_photo_profile.submit.data and form_photo_profile.validate():
+        # check if exist avatar photo
+        file = get_avatar_extension()
+        if file:
+            os.remove(f'static/images/{file}')
+
+        avatar = form_photo_profile.photo.data
+        extension = avatar.filename.split('.')[1]
+        avatar.filename = f'avatar.{extension}'
+        avatar.save(os.path.join('static/images', avatar.filename))
+
     return render_template('admin-personal.html', form_photo_profile=form_photo_profile)
 
 

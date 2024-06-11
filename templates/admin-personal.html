@@ -13,7 +13,10 @@
           <div class="card-body">
             <h5 class="card-title">Photo Profile</h5>
                 <p>A square photo size is recommended eg 500 x 500 px.</p>
-                {{ render_form(form_photo_profile) }}
+                <div class="d-flex justify-content-between align-items-center">
+                    {{ render_form(form_photo_profile) }}
+                    <img src="#" id="photo_preview" alt="" width="150">
+                </div>
               <h5 class="card-title mt-4">Email</h5>
               <p class="card-text">pedro092692@hotmail.com</p>
             <a href="#" class="btn btn-primary">Update Email</a>

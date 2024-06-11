@@ -24,4 +24,9 @@ class PhotoProfile(FlaskForm):
     submit = SubmitField(label='Update Photo')
 
 
+class Email(FlaskForm):
+    email = EmailField(label='Email', validators=[DataRequired(), Email()])
+    submit = SubmitField(label='Update Email')
+
+
 

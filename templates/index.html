@@ -22,7 +22,11 @@
 		<!-- Header -->
 			<header id="header">
 				<div class="inner">
-					<a href="#" class="image avatar"><img src="{{ url_for('static', filename='images/avatar.jpg') }}" alt="" /></a>
+					{% if media['photo_profile'] %}
+					<a href="#" class="image avatar"><img src="{{ url_for('static', filename='images/' + media['photo_profile']) }}" alt="" /></a>
+					{% else %}
+					<a href="#" class="image avatar"><img src="{{ url_for('static', filename='images/avatarold.jpg') }}" alt="" /></a>
+					{% endif %}
 					<h1 class="intro"><strong class="intro">I am Pedro Bastidas</strong>, a Python dev.<br/>
 					let's create amazing things<br />
 					with powerful tools.</a></h1>
