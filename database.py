@@ -2,6 +2,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Text
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash
+from flask_security import Security, SQLAlchemyUserDatastore, hash_password
+from flask_security.models import fsqla_v3 as fsqla
 import os
 
 
@@ -12,15 +15,20 @@ class Base(DeclarativeBase):
 
 # Create Extension
 db = SQLAlchemy(model_class=Base)
+fsqla.FsModels.set_db_info(db)
 
 
 # Create Tables
+class Role(db.Model, fsqla.FsRoleMixin):
+    pass
 
-class User(UserMixin, db.Model):
+
+class User(db.Model, fsqla.FsUserMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(250), nullable=False)
-    name: Mapped[str] = mapped_column(String(1000), nullable=False)
+    name: Mapped[str] = mapped_column(String(1000), nullable=True)
     password: Mapped[str] = mapped_column(String(500), nullable=False)
+    fs_uniquifier: Mapped[str] = mapped_column(String, nullable=False, unique=True)
 
 
 class SocialNetwork(db.Model):
@@ -49,13 +57,23 @@ class Database:
         self.db = db
         self.app = app
 
+        # set up flask security
+        self.user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+        self.app.security = Security(self.app, self.user_datastore )
+
         # Database init
         self.app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', 'sqlite:///portfolio.db')
+        self.app.config['SECURITY_PASSWORD_SALT'] = 'thisisasalt'
+
         self.db.init_app(self.app)
 
     def create_tables(self):
         with self.app.app_context():
             self.db.create_all()
+            if not self.app.security.datastore.find_user(email=os.environ.get('EMAIL_FOR_LOGIN')):
+                self.app.security.datastore.create_user(email=os.environ.get('EMAIL_FOR_LOGIN'),
+                                                        password=hash_password(os.environ.get('PASSWORD_FOR_LOGIN')))
+                self.db.session.commit()
 
     def create_work(self, title, text_info, image_url, work_url):
         new_work = Work(
@@ -159,6 +177,11 @@ class Database:
 
     def get_user(self, user_id):
         return self.db.get_or_404(User, user_id)
+
+    def add_name(self, name):
+        user = self.db.get_or_404(User, 1)
+        user.name = name
+        self.db.session.commit()
 
 
 

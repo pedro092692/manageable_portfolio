@@ -1,5 +1,4 @@
 from flask import Flask, url_for, redirect, render_template, request, flash
-from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from flask_wtf.csrf import CSRFProtect
 from database import Database
 from send_email import Email
@@ -7,13 +6,27 @@ from forms import LoginForm, RecentWork, PhotoProfile, Email, Bio, GivenName, So
     GetInTouchText, GetInTouch, UserForm
 from flask_bootstrap import Bootstrap5
 from helpers import get_avatar_extension, get_info_page, save_img_file
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_security import login_required
+from flask_mailman import Mail
+from dotenv import load_dotenv
 import os
 
+# load env
+load_dotenv()
 
 # INIT APP
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECURITY_RECOVERABLE'] = True
+app.config['SECURITY_POST_LOGIN_VIEW'] = '/admin'
+# Mail Config
+app.config['MAIL_SERVER'] = os.environ.get('SERVER')
+app.config['MAIL_PORT'] = os.environ.get('PORT')
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('USER')
+app.config['MAIL_PASSWORD'] = os.environ.get('PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('USER')
+mail = Mail(app)
 csfr = CSRFProtect(app)
 
 # DATABASE
@@ -23,15 +36,6 @@ db.create_tables()
 
 # PLUGINS
 Bootstrap5(app)
-
-# login manager
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.get_user(user_id)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -71,6 +75,7 @@ def index():
         'main_text': main_text,
         'get_in_touch_title': get_in_touch_title,
         'get_in_touch_text': get_in_touch_text,
+        'name': db.get_user(user_id=1).name
     }
 
     if request.method == 'POST':
@@ -78,46 +83,12 @@ def index():
         name = request.form.get('name')
         email_sender = request.form.get('email')
         message = request.form.get('message')
-        # send_email = email.send_email(message, email_sender=email_sender, name=name)
+        send_email = email.send_email(message, email_sender=email_sender, name=name)
         send_email = True
         if send_email:
             flash('Message sent I will contact you as soon as possible.')
 
     return render_template('index.html', media=media, page_data=page_data)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('admin'))
-
-    user = db.check_user()
-    if user:
-        form = LoginForm()
-        if form.validate_on_submit():
-            user_email = form.user.data
-            user_password = form.password.data
-            user = db.check_user(email=user_email)
-            if user:
-                if check_password_hash(user.password, user_password):
-                    login_user(user)
-                    return redirect(url_for('admin'))
-            else:
-                flash('Invalid Password or User')
-
-    else:
-        form = UserForm()
-
-        if form.submit.data and 'name' in request.form:
-            user_email = form.user_email.data
-            user_name = form.name.data
-            user_password = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=8)
-
-            db.create_user(email=user_email, password=user_password, name=user_name)
-
-            return redirect(url_for('login'))
-
-    return render_template('login.html', form=form, user=user)
 
 
 @app.route('/admin', methods=['GET'])
@@ -149,7 +120,14 @@ def personal():
         flash('Email updated')
 
     # Given name info
-    name_form = GivenName()
+    user = db.get_user(user_id=1)
+
+    name_form = GivenName(
+        name=user.name
+    )
+    if name_form.submit_name.data and name_form.validate():
+        db.add_name(name=name_form.name.data)
+        flash('Given name updated.')
 
     # Bio info
     bio_info = get_info_page(db=db, type_info='bio')
@@ -318,25 +296,13 @@ def work_edit(work_id):
     return render_template('add-work.html', form=form_edit, work_id=work.id)
 
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
-
-@login_manager.unauthorized_handler
-def unauthorized():
-    return redirect(url_for('index'))
-
-
 @app.errorhandler(404)
 def custom_404(error):
     return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
 
 
 

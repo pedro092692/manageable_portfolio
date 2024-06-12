@@ -23,7 +23,7 @@
     <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 px-4 border-bottom">
         <h2>Welcome {{current_user.name | title }}</h2>
         <div class="col-md-3 text-end">
-            <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-outline-primary me-2">Logout</button></a>
+            <a href="{{ url_for('security.logout') }}"><button type="button" class="btn btn-outline-primary me-2">Logout</button></a>
         </div>
     </header>
     <!-- main content-->
@@ -52,6 +52,12 @@
                     <a href="{{ url_for('page') }}" class="nav-link text-white {{ 'active' if request.endpoint == 'page' }}">
                       <i class="fa-solid fa-pager"></i>
                       Page Info
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('index') }}" class="nav-link text-white">
+                      <i class="fa-solid fa-briefcase"></i>
+                      Portfolio
                     </a>
                 </li>
                 </ul>
