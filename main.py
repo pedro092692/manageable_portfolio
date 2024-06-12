@@ -302,7 +302,7 @@ def custom_404(error):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=False)
 
 
 

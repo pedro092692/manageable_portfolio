@@ -63,7 +63,7 @@ class Database:
 
         # Database init
         self.app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', 'sqlite:///portfolio.db')
-        self.app.config['SECURITY_PASSWORD_SALT'] = 'thisisasalt'
+        self.app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECRET_KEY')
 
         self.db.init_app(self.app)
 
