@@ -9,7 +9,7 @@ class Email:
         self.user = os.getenv('USER')
         self.password = os.getenv('PASSWORD')
         self.server = os.getenv('SERVER')
-        self.port = os.getenv('PORT')
+        self.port = 587
 
     def send_email(self, message: str, email_sender: str, name: str):
         try:

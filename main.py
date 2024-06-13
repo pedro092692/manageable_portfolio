@@ -20,7 +20,7 @@ app.config['SECURITY_RECOVERABLE'] = True
 app.config['SECURITY_POST_LOGIN_VIEW'] = '/admin'
 # Mail Config
 app.config['MAIL_SERVER'] = os.environ.get('SERVER')
-app.config['MAIL_PORT'] = os.environ.get('PORT')
+app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('USER')
 app.config['MAIL_PASSWORD'] = os.environ.get('PASSWORD')
