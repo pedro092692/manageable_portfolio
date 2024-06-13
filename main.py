@@ -2,8 +2,7 @@ from flask import Flask, url_for, redirect, render_template, request, flash
 from flask_wtf.csrf import CSRFProtect
 from database import Database
 from send_email import Email
-from forms import LoginForm, RecentWork, PhotoProfile, Email, Bio, GivenName, SocialNetwork, PageMainTitle, MainText, \
-    GetInTouchText, GetInTouch, UserForm
+from forms import *
 from flask_bootstrap import Bootstrap5
 from helpers import get_avatar_extension, get_info_page, save_img_file
 from flask_security import login_required
