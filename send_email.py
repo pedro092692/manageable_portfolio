@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 
 
-class Email:
+class Contact:
     def __init__(self):
         load_dotenv()
         self.user = os.getenv('USER')

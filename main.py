@@ -1,7 +1,7 @@
 from flask import Flask, url_for, redirect, render_template, request, flash
 from flask_wtf.csrf import CSRFProtect
 from database import Database
-from send_email import Email
+from send_email import Contact
 from forms import *
 from flask_bootstrap import Bootstrap5
 from helpers import get_avatar_extension, get_info_page, save_img_file
@@ -78,11 +78,11 @@ def index():
     }
 
     if request.method == 'POST':
-        email = Email()
+        email = Contact()
         name = request.form.get('name')
         email_sender = request.form.get('email')
         message = request.form.get('message')
-        send_email = email.send_email(message, email_sender=email_sender, name=name)
+        send_email = email.send_email(message=message, email_sender=email_sender, name=name)
         send_email = True
         if send_email:
             flash('Message sent I will contact you as soon as possible.')
@@ -301,7 +301,7 @@ def custom_404(error):
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True, port=8001)
 
 
 
